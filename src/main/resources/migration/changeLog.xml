@@ -1,0 +1,128 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog
+    https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="quarkus" id="1">
+        <createTable tableName="student">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="surname" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                    <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="age" type="INT"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="dteducci" id="2">
+        <createTable tableName="university">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="email" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="city" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="3" author="dteducci">
+        <addColumn tableName="student">
+            <column name="university_id" type="BIGINT" />
+        </addColumn>
+        <addForeignKeyConstraint baseTableName="student" baseColumnNames="university_id" constraintName="university_foreign_key"
+                                 referencedTableName="university" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="4" author="dteducci">
+        <createTable tableName="course">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="teacher" type="VARCHAR(255)"/>
+        </createTable>
+
+        <createTable tableName="student_course">
+            <column name="student_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="course_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="student_course" baseColumnNames="course_id" constraintName="course_foreign_key"
+                                 referencedTableName="course" referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="student_course" baseColumnNames="student_id" constraintName="student_foreign_key"
+                                 referencedTableName="student" referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="5" author="dteducci">
+        <createSequence sequenceName="student_sequence" startValue="2"></createSequence>
+        <createSequence sequenceName="course_sequence" startValue="1"></createSequence>
+        <createSequence sequenceName="university_sequence" startValue="2"></createSequence>
+
+        <addColumn tableName="student_course">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true"/>
+            </column>
+        </addColumn>
+
+        <insert tableName="course">
+            <column name="id" valueSequenceNext="course_sequence"/>
+            <column name="name">Computer science</column>
+            <column name="teacher">Marco Rossi</column>
+        </insert>
+        <insert tableName="course">
+            <column name="id" valueSequenceNext="course_sequence"/>
+            <column name="name">Database</column>
+            <column name="teacher">Andrea Verdi</column>
+        </insert>
+        <insert tableName="course">
+            <column name="id" valueSequenceNext="course_sequence"/>
+            <column name="name">Network and Calculators</column>
+            <column name="teacher">Giuseppe Bianchi</column>
+        </insert>
+    </changeSet>
+
+    <changeSet id="6" author="dteducci">
+        <createSequence sequenceName="student_course_sequence" startValue="1"></createSequence>
+        <insert tableName="student_course">
+            <column name="id" valueSequenceNext="student_course_sequence"/>
+            <column name="course_id">1</column>
+            <column name="student_id">1</column>
+        </insert>
+
+        <insert tableName="student_course">
+            <column name="id" valueSequenceNext="student_course_sequence"/>
+            <column name="course_id">2</column>
+            <column name="student_id">1</column>
+        </insert>
+
+        <insert tableName="student_course">
+            <column name="id" valueSequenceNext="student_course_sequence"/>
+            <column name="course_id">3</column>
+            <column name="student_id">1</column>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
