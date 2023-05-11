@@ -54,3 +54,26 @@ If you want to learn more about building native executables, please consult http
 Easily start your Reactive RESTful Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+## LIQUIBASE
+
+For generate the changelog file from a database exist, add to the pom.xml the plugin follow:
+
+      <plugin>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-maven-plugin</artifactId>
+        <version>4.6.1</version>
+        <configuration>
+          <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+        </configuration>
+      </plugin>
+
+Create file liquibase.properties and finally add the properties follow:
+
+EXAMPLE
+
+url=jdbc:postgresql://localhost:5432/quarkus
+username=postgres
+password=postgres
+driver=org.postgresql.Driver
+outputChangeLogFile=src/main/resources/changeLog_prov.sql

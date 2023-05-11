@@ -6,11 +6,16 @@ import com.teducci.commons.mappers.StudentMapper;
 import com.teducci.entites.StudentEntity;
 import com.teducci.services.StudentService;
 import io.smallrye.common.constraint.NotNull;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
+import java.security.Principal;
 
 @Path("/students")
 public class StudentController {
@@ -20,6 +25,12 @@ public class StudentController {
 
     @Inject
     private StudentMapper studentMapper;
+
+    @Inject
+    private Principal principal;
+
+    @Inject
+    private JsonWebToken jsonWebToken;
 
     @GET
     public Response findAll() {
@@ -36,7 +47,10 @@ public class StudentController {
 
     @GET
     @Path("/{id}")
-    public Response findById(@PathParam("id") Long id) {
+    @RolesAllowed({"admin", "professor", "student"})
+    public Response findById(@PathParam("id") Long id, @Context HttpHeaders headers) {
+        System.out.println(principal.getName());
+        System.out.println(jsonWebToken.getGroups());
         return Response.ok(studentMapper.toDto(studentService.findByID(id))).build();
     }
 
